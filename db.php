@@ -1,20 +1,17 @@
 <?php
+// DB bilgileri
 $host = 'localhost';
-$db   = 'crm_db';
-$user = 'root';
-$pass = '';
+$dbname = 'crm_db';  // senin veritabanın
+$user = 'root';      // XAMPP default
+$pass = '';          // XAMPP default
+
 $charset = 'utf8mb4';
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-$options = [
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-];
+$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
-} catch (Exception $e) {
-    echo "Bağlantı hatası: " . $e->getMessage();
-    exit;
+    $pdo = new PDO($dsn, $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e){
+    die("DB Hatası: " . $e->getMessage());
 }
-?>

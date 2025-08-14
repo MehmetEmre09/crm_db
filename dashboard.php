@@ -1,139 +1,196 @@
 <?php
-
 include 'db.php';
 
 // Dashboard verileri
 $total_customers = $pdo->query("SELECT COUNT(*) as total_customers FROM customers")->fetch()['total_customers'];
 $active_sales = $pdo->query("SELECT COUNT(*) as active_sales FROM sales WHERE status='aktif'")->fetch()['active_sales'];
 $recent_communications = $pdo->query("
-    SELECT com.id, c.name as customer_name, u.username, com.note, com.contact_date
+    SELECT com.id, c.name as customer_name, com.note, com.contact_date
     FROM communications com
     LEFT JOIN customers c ON com.customer_id=c.id
-    LEFT JOIN users u ON com.user_id=u.id
     ORDER BY com.contact_date DESC
     LIMIT 5
 ")->fetchAll();
 
-// Satış durumları
-$sales_status = $pdo->query("
-    SELECT status, COUNT(*) as total 
-    FROM sales 
-    GROUP BY status
-")->fetchAll(PDO::FETCH_KEY_PAIR);
+// Grafik verileri
+$sales_stats = $pdo->query("SELECT status, COUNT(*) as count FROM sales GROUP BY status")->fetchAll(PDO::FETCH_KEY_PAIR);
 
-// Son 5 iletişim - müşteri bazlı
-$comm_counts = $pdo->query("
-    SELECT c.name, COUNT(*) as total
-    FROM communications com
-    LEFT JOIN customers c ON com.customer_id=c.id
-    GROUP BY c.name
-    ORDER BY total DESC
-    LIMIT 5
-")->fetchAll(PDO::FETCH_KEY_PAIR);
+// İletişim tarih dağılımı
+$comm_dates = $pdo->query("SELECT DATE(contact_date) as date, COUNT(*) as count FROM communications GROUP BY DATE(contact_date) ORDER BY date ASC")->fetchAll();
+$comm_labels = array_column($comm_dates, 'date');
+$comm_counts = array_column($comm_dates, 'count');
 ?>
 
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Basit CRM</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
-        nav { margin-bottom: 20px; }
-        nav a { margin-right: 15px; text-decoration: none; font-weight: bold; color: #2c3e50; }
-        nav a:hover { text-decoration: underline; }
-        h1, h3 { color: #34495e; }
-        table { border-collapse: collapse; width: 100%; background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top:10px;}
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #3498db; color: white; }
-        tr:nth-child(even) { background-color: #f2f2f2; }
-        tr:hover { background-color: #e1f5fe; }
-        .card {
-            background-color: #fff;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: inline-block;
-            min-width: 150px;
-            text-align: center;
-        }
-        canvas { background-color: #fff; padding: 10px; border-radius:6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom:20px;}
-    </style>
+<meta charset="UTF-8">
+<title>Dashboard - CRM</title>
+<link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+<link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="dist/css/adminlte.min.css">
+<script src="plugins/jquery/jquery-3.6.0.min.js"></script>
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body { background-color: #f4f6f9; }
+    .small-box { border-radius: 0.5rem; box-shadow: 0 3px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
+    .small-box:hover { transform: translateY(-3px); }
+    .card { border-radius: 0.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .table thead th { background-color: #007bff; color: #fff; }
+    .badge { color: #000; font-weight: 600; }
+</style>
 </head>
-<body>
+<body class="hold-transition layout-top-nav">
+<div class="wrapper">
 
-<nav>
-    <a href="dashboard.php">Dashboard</a>
-    <a href="customers.php">Müşteriler</a>
-    <a href="sales.php">Satışlar</a>
-    <a href="communications.php">İletişim</a>
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-dark bg-primary">
+<div class="container">
+    <ul class="navbar-nav">
+        <li class="nav-item"><a href="dashboard.php" class="nav-link active">Dashboard</a></li>
+        <li class="nav-item"><a href="customers.php" class="nav-link">Müşteriler</a></li>
+        <li class="nav-item"><a href="sales.php" class="nav-link">Satışlar</a></li>
+        <li class="nav-item"><a href="communications.php" class="nav-link">İletişim</a></li>
+    </ul>
+</div>
 </nav>
 
-<h1>CRM Dashboard</h1>
+<!-- Content Wrapper -->
+<div class="content-wrapper p-3">
+    <div class="container-fluid">
+        <h1 class="mb-4">CRM Dashboard</h1>
 
-<div style="display:flex; gap:20px; flex-wrap: wrap;">
-    <div class="card">
-        <h3>Toplam Müşteri</h3>
-        <p><?= $total_customers ?></p>
-    </div>
-    <div class="card">
-        <h3>Aktif Satış Fırsatları</h3>
-        <p><?= $active_sales ?></p>
+        <!-- Stat Kartları -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3><?= $total_customers ?></h3>
+                        <p>Toplam Müşteri</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <a href="customers.php" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3><?= $active_sales ?></h3>
+                        <p>Aktif Satış</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-chart-line"></i></div>
+                    <a href="sales.php" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3><?= count($recent_communications) ?></h3>
+                        <p>Son İletişim</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-envelope"></i></div>
+                    <a href="communications.php" class="small-box-footer">Detaylar <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>CRM</h3>
+                        <p>Kontrol Paneli</p>
+                    </div>
+                    <div class="icon"><i class="fas fa-cogs"></i></div>
+                    <a href="dashboard.php" class="small-box-footer">Yenile <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grafikler -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-info text-white"><h3 class="card-title"><i class="fas fa-chart-pie"></i> Satış Durumu</h3></div>
+                    <div class="card-body">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white"><h3 class="card-title"><i class="fas fa-chart-line"></i> İletişim Aktivitesi</h3></div>
+                    <div class="card-body">
+                        <canvas id="commChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Son 5 İletişim Tablosu -->
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white"><h3 class="card-title">Son 5 İletişim</h3></div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Müşteri</th>
+                            <th>Not</th>
+                            <th>Tarih</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($recent_communications as $r): ?>
+                        <tr>
+                            <td><?= $r['id'] ?></td>
+                            <td><?= $r['customer_name'] ?></td>
+                            <td><?= htmlspecialchars($r['note']) ?></td>
+                            <td><?= $r['contact_date'] ?></td>
+                            <td><a href="communications.php" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> Detay</a></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<h3>Satış Durumu</h3>
-<canvas id="salesChart" width="400" height="200"></canvas>
-
-<h3>Son 5 İletişim Kayıdı</h3>
-<table>
-    <tr>
-        <th>ID</th><th>Müşteri</th><th>Kullanıcı</th><th>Not</th><th>Tarih</th>
-    </tr>
-    <?php foreach($recent_communications as $r): ?>
-    <tr>
-        <td><?= $r['id'] ?></td>
-        <td><?= $r['customer_name'] ?></td>
-        <td><?= $r['username'] ?></td>
-        <td><?= $r['note'] ?></td>
-        <td><?= $r['contact_date'] ?></td>
-    </tr>
-    <?php endforeach; ?>
-</table>
-
-<h3>Son 5 İletişim - Müşteri Bazlı</h3>
-<canvas id="commChart" width="400" height="200"></canvas>
-
 <script>
+// Satış Durumu Grafiği
 const salesCtx = document.getElementById('salesChart').getContext('2d');
 const salesChart = new Chart(salesCtx, {
-    type: 'bar',
+    type: 'doughnut',
     data: {
-        labels: <?= json_encode(array_keys($sales_status)) ?>,
+        labels: <?= json_encode(array_keys($sales_stats)) ?>,
         datasets: [{
-            label: 'Satış Adedi',
-            data: <?= json_encode(array_values($sales_status)) ?>,
-            backgroundColor: ['#3498db','#2ecc71','#e74c3c'],
+            data: <?= json_encode(array_values($sales_stats)) ?>,
+            backgroundColor: ['#28a745','#007bff','#dc3545','#ffc107'],
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+// İletişim Aktivitesi Grafiği
+const commCtx = document.getElementById('commChart').getContext('2d');
+const commChart = new Chart(commCtx, {
+    type: 'line',
+    data: {
+        labels: <?= json_encode($comm_labels) ?>,
+        datasets: [{
+            label: 'Günlük İletişim',
+            data: <?= json_encode($comm_counts) ?>,
+            fill: false,
+            borderColor: '#17a2b8',
+            tension: 0.3
         }]
     },
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
-
-const commCtx = document.getElementById('commChart').getContext('2d');
-const commChart = new Chart(commCtx, {
-    type: 'doughnut',
-    data: {
-        labels: <?= json_encode(array_keys($comm_counts)) ?>,
-        datasets: [{
-            data: <?= json_encode(array_values($comm_counts)) ?>,
-            backgroundColor: ['#3498db','#2ecc71','#e74c3c','#f1c40f','#9b59b6'],
-        }]
-    },
-    options: { responsive: true }
-});
 </script>
 
+</div>
 </body>
 </html>
