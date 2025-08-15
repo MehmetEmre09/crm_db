@@ -16,17 +16,7 @@ if(isset($_POST['update_customer'])){
     exit;
 }
 ?>
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <title>Müşteri Düzenle - CRM</title>
-    <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="dist/css/adminlte.min.css">
-</head>
-<body class="hold-transition layout-top-nav">
-<div class="wrapper">
+<?php include'header.php'; ?>
 
 
 <section class="content p-3">

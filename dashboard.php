@@ -1,4 +1,10 @@
 <?php
+// Giriş kontrolü
+session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
 include 'db.php';
 
 // Dashboard verileri
@@ -35,11 +41,11 @@ $comm_counts = array_column($comm_dates, 'count');
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     body { background-color: #f4f6f9; }
-    .small-box { border-radius: 0.5rem; box-shadow: 0 3px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
-    .small-box:hover { transform: translateY(-3px); }
-    .card { border-radius: 0.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .small-box { border-radius: 0.75rem; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: transform 0.2s; }
+    .small-box:hover { transform: translateY(-5px); }
+    .card { border-radius: 0.75rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     .table thead th { background-color: #007bff; color: #fff; }
-    .badge { color: #000; font-weight: 600; }
+    .navbar-nav .nav-item .nav-link { margin-right: 1rem; }
 </style>
 </head>
 <body class="hold-transition layout-top-nav">
@@ -48,11 +54,21 @@ $comm_counts = array_column($comm_dates, 'count');
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-dark bg-primary">
 <div class="container">
-    <ul class="navbar-nav">
-        <li class="nav-item"><a href="dashboard.php" class="nav-link active">Dashboard</a></li>
-        <li class="nav-item"><a href="customers.php" class="nav-link">Müşteriler</a></li>
-        <li class="nav-item"><a href="sales.php" class="nav-link">Satışlar</a></li>
-        <li class="nav-item"><a href="communications.php" class="nav-link">İletişim</a></li>
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item"><a href="dashboard.php" class="nav-link active"><i class="fas fa-tachometer-alt" style="color:white;"></i> Dashboard</a></li>
+        <li class="nav-item"><a href="customers.php" class="nav-link"><i class="fas fa-users" style="color:white;"></i> Müşteriler</a></li>
+        <li class="nav-item"><a href="sales.php" class="nav-link"><i class="fas fa-chart-line" style="color:white;"></i> Satışlar</a></li>
+        <li class="nav-item"><a href="communications.php" class="nav-link"><i class="fas fa-envelope" style="color:white;"></i> İletişim</a></li>
+    </ul>
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#00000">
+                <i class="fas fa-user-circle"></i> <?= htmlspecialchars($_SESSION['username']) ?>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a href="logout.php" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Admin</a>
+            </div>
+        </li>
     </ul>
 </div>
 </nav>

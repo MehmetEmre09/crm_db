@@ -36,43 +36,7 @@ $customers = $pdo->query("SELECT id,name FROM customers")->fetchAll();
 $sales = $pdo->query("SELECT s.*, c.name as customer_name FROM sales s JOIN customers c ON s.customer_id=c.id ORDER BY s.id DESC")->fetchAll();
 ?>
 
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<title>Satışlar - CRM</title>
-<link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
-<link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
-<link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-<link rel="stylesheet" href="dist/css/adminlte.min.css">
-<script src="plugins/jquery/jquery-3.6.0.min.js"></script>
-<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="plugins/datatables-bs4/jquery.dataTables.min.js"></script>
-<script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-<script src="dist/js/adminlte.min.js"></script>
-<style>
-    .navbar-nav .nav-link.active { background-color: #0056b3; color: #fff; border-radius: 0.25rem; }
-    .card { border-radius: 0.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .error-msg, .alert { margin-bottom: 15px; }
-    .btn { margin-right: 5px; padding: 0.4rem 0.8rem; font-size: 0.875rem; }
-    .badge { color: #000 !important; } /* Durum yazısını siyah yaptık */
-</style>
-</head>
-<body class="hold-transition layout-top-nav">
-<div class="wrapper">
-
-<!-- Navbar -->
-<nav class="main-header navbar navbar-expand navbar-dark bg-primary">
-    <div class="container">
-        <ul class="navbar-nav">
-            <li class="nav-item"><a href="dashboard.php" class="nav-link">Dashboard</a></li>
-            <li class="nav-item"><a href="customers.php" class="nav-link">Müşteriler</a></li>
-            <li class="nav-item"><a href="sales.php" class="nav-link active">Satışlar</a></li>
-            <li class="nav-item"><a href="communications.php" class="nav-link">İletişim</a></li>
-        </ul>
-    </div>
-</nav>
-
+<?php include'header.php'; ?>
 <section class="content p-3">
 <div class="container-fluid">
 
@@ -105,9 +69,9 @@ $sales = $pdo->query("SELECT s.*, c.name as customer_name FROM sales s JOIN cust
             <div class="form-group">
                 <label>Durum</label>
                 <select name="status" class="form-control">
-                    <option value="aktif">Aktif</option>
-                    <option value="kapandı">Kapandı</option>
-                    <option value="kaybedildi">Kaybedildi</option>
+                    <option value="aktif" style="color:black;" >Aktif</option>
+                    <option value="kapandı" style="color:black;" >Kapandı</option>
+                    <option value="kaybedildi" style="color:black;">Kaybedildi</option>
                 </select>
             </div>
             <button type="submit" name="add_sale" class="btn btn-success">Ekle</button>
@@ -139,7 +103,7 @@ $sales = $pdo->query("SELECT s.*, c.name as customer_name FROM sales s JOIN cust
                             elseif($s['status']=='kapandı') $badge='primary';
                             elseif($s['status']=='kaybedildi') $badge='danger';
                         ?>
-                        <span class="badge badge-<?= $badge ?>"><?= $s['status'] ?></span>
+                        <span class="badge badge-<?= $badge ?>" style="color:black;"><?= $s['status'] ?></span>
                     </td>
                     <td>
                         <a href="edit_sales.php?id=<?= $s['id'] ?>" class="btn btn-warning px-3 py-1"><i class="fas fa-edit"></i> Düzenle</a>

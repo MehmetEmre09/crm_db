@@ -32,17 +32,7 @@ if(isset($_POST['update_communication'])){
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <title>Düzenle - İletişim</title>
-    <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="dist/css/adminlte.min.css">
-</head>
-<body class="hold-transition sidebar-mini">
-<div class="wrapper">
-
+<?php include'header.php'; ?>
 <section class="content p-3">
 <div class="container-fluid">
 
@@ -50,7 +40,7 @@ if(isset($_POST['update_communication'])){
 
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">İletişim Bilgileri</h3>
+            <h3 class="card-title ">İletişim Bilgileri</h3>
         </div>
         <div class="card-body">
             <form method="post">
