@@ -1,0 +1,67 @@
+1. Hafta
+
+1. Gün:
+Bugün CRM projesine başlangıç yapıldı. İlk olarak CRM (Customer Relationship Management – Müşteri İlişkileri Yönetimi) sistemlerinin mantığı araştırıldı. Firmaların müşteri bilgilerini tutmak, satış süreçlerini yönetmek ve iletişim kayıtlarını saklamak için neden CRM sistemlerine ihtiyaç duyduğu üzerine notlar çıkarıldı. Yapılan incelemeler sonucunda projenin temel amacı belirlendi: müşteri yönetimi, satış takibi, iletişim kayıtları ve basit raporlama modüllerini içeren bir CRM yazılımı geliştirmek.
+
+2. Gün:
+Projenin gereksinim analizi yapıldı. Kullanıcıların bu sistemi nasıl kullanacağına dair senaryolar belirlendi. Örneğin; yeni müşteri ekleme, müşteri bilgilerini güncelleme, satış kaydı ekleme ve müşteriyle yapılan görüşmeyi kaydetme gibi işlemler analiz edildi. Tüm bu senaryolar sonucunda gereksinimler liste haline getirildi ve modüller belirlendi. Bu çalışmaların sonucunda proje için gereksinim dokümanı hazırlandı.
+
+3. Gün:
+Veritabanı tasarımına başlandı. CRM sisteminde bulunması gereken tablolar belirlendi: musteriler, satislar, iletisim, kullanicilar. Bu tablolar arasındaki ilişkiler çıkarıldı. Müşteri tablosu ile satış tablosu arasında bire-çok, müşteri tablosu ile iletişim tablosu arasında bire-çok ilişki kurulması gerektiği tespit edildi.
+
+4. Gün:
+Veritabanı tasarımı için ER diagram hazırlandı. Bunun için Draw.io uygulaması kullanıldı. Müşteri, satış ve iletişim tabloları arasındaki ilişkiler detaylı şekilde çizildi. Ayrıca kullanıcı tablosu da diyagrama eklendi. Tablolar arasındaki ilişkiler normalizasyon kurallarına göre düzenlendi ve son hali verildi.
+
+5. Gün:
+Proje için genel zaman planı hazırlandı. Plan dört haftalık süreç üzerinden oluşturuldu. Birinci hafta analiz ve tasarım, ikinci hafta müşteri yönetim modülü, üçüncü hafta satış ve iletişim modülleri, dördüncü hafta ise test, hata düzeltme ve sunum aşamalarından oluştu. Tüm bu aşamalar yazılı hale getirilerek proje planı dokümanı oluşturuldu.
+
+2. Hafta
+
+6. Gün:
+MySQL üzerinde crm_db isimli veritabanı oluşturuldu. Birinci hafta hazırlanan ER diyagrama göre tablolar (musteriler, satislar, iletisim, kullanicilar) oluşturuldu. Tablolar için birincil anahtar (primary key) ve yabancı anahtar (foreign key) tanımlamaları yapıldı.
+
+7. Gün:
+PHP PDO kullanılarak veritabanı bağlantısı kuruldu. Bunun için db.php isimli dosya hazırlandı. Daha sonra bağlantı test edildi. Hatalar düzeltilerek MySQL veritabanı ile başarılı şekilde bağlantı sağlandı.
+
+8. Gün:
+Müşteri ekleme ekranı geliştirildi. HTML formu hazırlandı ve PHP ile POST işlemleri yazıldı. Formdan alınan veriler müşteri tablosuna kaydedildi. Böylece sisteme müşteri ekleme işlemi başarıyla gerçekleştirildi.
+
+9. Gün:
+Müşteri listeleme ekranı hazırlandı. Veritabanında bulunan tüm müşterilerin listelenmesi için PHP sorguları yazıldı ve sonuçlar tablo halinde ekrana yansıtıldı. Görselliği iyileştirmek için basit CSS düzenlemeleri yapıldı.
+
+10. Gün:
+Müşteri bilgilerini güncelleme ve silme işlemleri eklendi. Böylece müşteri yönetim modülü için CRUD işlemleri (Create, Read, Update, Delete) tamamlanmış oldu.
+
+3. Hafta
+
+11. Gün:
+Satış modülü için satislar isimli tablo oluşturuldu. Satış ekleme ekranı geliştirildi. Yeni satış kaydı oluşturulurken müşteri seçimi yapılabilecek şekilde form tasarlandı.
+
+12. Gün:
+Satış listeleme, güncelleme ve silme işlemleri yapıldı. Böylece satış modülünün tüm CRUD işlemleri tamamlandı ve modül kullanılabilir hale getirildi.
+
+13. Gün:
+İletişim kayıtları için iletisim tablosu oluşturuldu. İletişim ekleme ekranı hazırlandı. Bu ekranda müşterilerle yapılan görüşme notlarının sisteme kaydedilmesi sağlandı.
+
+14. Gün:
+İletişim kayıtları için listeleme, güncelleme ve silme işlemleri tamamlandı. Böylece iletişim modülü tam olarak çalışır hale getirildi.
+
+15. Gün:
+Raporlama ekranı hazırlandı. Dashboard üzerinde toplam müşteri sayısı, toplam satış adedi ve son 5 iletişim kaydı gibi veriler görüntülendi. Bu sayede sistemde temel raporlama işlemleri yapılabilir hale getirildi.
+
+4. Hafta
+
+16. Gün:
+AdminLTE arayüz teması indirildi ve projeye entegre edildi. Dashboard ekranı görsel olarak düzenlendi. Menü yapısı oluşturularak kullanıcıya kolay erişim imkânı sağlandı.
+
+17. Gün:
+Müşteri, satış ve iletişim modülleri AdminLTE arayüzüne bağlandı. Arayüz düzenlemeleri sayesinde daha kullanıcı dostu ve profesyonel bir görünüm elde edildi.
+
+18. Gün:
+API uçları Postman üzerinde test edildi. CRUD işlemlerinin sorunsuz çalıştığı doğrulandı. Ayrıca manuel testler de yapıldı.
+
+19. Gün:
+Testler sonucunda tespit edilen hatalar giderildi. Formlara doğrulama kuralları eklendi (örneğin e-posta formatı kontrolü, boş alan bırakılmaması). Proje için kullanım kılavuzu yazılmaya başlandı.
+
+20. Gün:
+Projenin son düzenlemeleri yapıldı. Kullanım kılavuzu tamamlandı ve sunum hazırlandı. Final sunumu gerçekleştirildi. Sonuç olarak, müşteri yönetimi, satış ve iletişim modüllerini içeren, raporlama özellikleri bulunan ve AdminLTE arayüzüyle desteklenen çalışan bir CRM sistemi ortaya çıkarıldı. 
